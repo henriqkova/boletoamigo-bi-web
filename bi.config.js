@@ -2,7 +2,7 @@ module.exports = {
   cliente: {
     nome: "Boleto Amigo",
     subdomain: "boletoamigo-bi",
-    coolify_app_uuid: "",
+    coolify_app_uuid: "bahb4txdqr2su1vk6wqvd90k",
     cor_primaria: "#06b6d4",
   },
   fontes: {
