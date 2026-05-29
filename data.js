@@ -1,4 +1,4 @@
-/* BGP BI — gerado por build-data.cjs em 2026-05-29T12:53:39.540Z */
+/* BGP BI — gerado por build-data.cjs em 2026-05-29T17:39:03.165Z */
 /* Empresa: Boleto Amigo | Ano ref: 2026 */
 const MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
 const MONTHS_FULL = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
@@ -16583,12 +16583,6 @@ window.REF_YEAR = REF_YEAR;
 window.AVAILABLE_YEARS = AVAILABLE_YEARS;
 window.aggregateTx = aggregateTx;
 window.filterTx = filterTx;
-// Cache LRU para getBit — evita recompute repetido com mesmos params
-var _bitCache = new Map();
-var _bitCacheMax = 16;
-function _bitCacheKey(sf, dd, y, regime, ef) {
-  return sf + '|' + (dd ? dd.type + ':' + dd.value : '-') + '|' + y + '|' + (regime || 'caixa') + '|' + (ef ? JSON.stringify(ef) : '-');
-}
 window.getBit = function (statusFilter, drilldown, year, month, regime, extraFilters) {
   const sf = statusFilter || window.BIT_FILTER || 'realizado';
   const y = year || window.REF_YEAR;
@@ -16598,15 +16592,8 @@ window.getBit = function (statusFilter, drilldown, year, month, regime, extraFil
     const ym = y + '-' + mm;
     dd = { type: 'mes', value: ym, label: ym };
   }
-  var key = _bitCacheKey(sf, dd, y, regime, extraFilters);
-  if (_bitCache.has(key)) return _bitCache.get(key);
-  var result = window.recomputeBit(sf, dd, y, regime, extraFilters);
-  if (_bitCache.size >= _bitCacheMax) { var first = _bitCache.keys().next().value; _bitCache.delete(first); }
-  _bitCache.set(key, result);
-  return result;
+  return window.recomputeBit(sf, dd, y, regime, extraFilters);
 };
-// Invalidate cache when statusFilter changes
-window._invalidateBitCache = function() { _bitCache.clear(); };
 // Cross-filter helper: combina statusFilter + drilldown + regime e retorna BIT-like
 // com KPIs/charts/extrato recalculados em ~10ms (17k rows).
 window.recomputeBit = function (statusFilter, drilldown, year, regime, extraFilters) {
