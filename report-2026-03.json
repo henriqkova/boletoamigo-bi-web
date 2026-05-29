@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-05-29T12:00:00.000Z",
+  "empresa": "Boleto Amigo",
+  "periodo": "Marco/2026",
+  "year": 2026,
+  "month": 3,
+  "filter": "realizado",
+  "secoes": {
+    "visao_geral": {
+      "title": "Visao Geral",
+      "analysis": "Marco de 2026 apresentou receita de aproximadamente R$ 37.100,00 e despesas de R$ 43.800,00, resultando em deficit mensal de R$ 6.700,00. O acumulado do primeiro trimestre atingiu resultado negativo de R$ 18.300,00, evidenciando a persistencia do desequilibrio entre receitas e custos operacionais da Boleto Amigo.\n\nO volume de vendas no mes foi de 82 operacoes, o melhor resultado mensal do trimestre. Contudo, 14 cancelamentos foram registrados em marco, elevando o total do trimestre para 37 ocorrencias. A taxa de cancelamento de aproximadamente 17% sobre as vendas representa perda significativa de receita recorrente e compromete a sustentabilidade do modelo de negocios.",
+      "error": null
+    },
+    "receita": {
+      "title": "Receita",
+      "analysis": "A receita de marco atingiu R$ 37.100,00, marcando o melhor desempenho mensal do trimestre. O crescimento foi impulsionado pelo fechamento de periodo fiscal de muitas empresas clientes, que aumentaram o volume de emissao de boletos para regularizacao de cobranças do primeiro trimestre.\n\nApesar da evolucao positiva da receita, o gap em relacao as despesas permanece elevado. A receita acumulada do trimestre de R$ 107.100,00 representa apenas 84% do total de despesas no mesmo periodo. Para atingir o ponto de equilibrio, seria necessario um incremento de receita mensal de pelo menos R$ 6.000,00 ou reducao equivalente nas despesas.",
+      "error": null
+    },
+    "despesa": {
+      "title": "Despesa",
+      "analysis": "As despesas de marco totalizaram R$ 43.800,00, o maior valor mensal do trimestre. O incremento foi causado por custos pontuais de atualizacao de sistemas e despesas com compliance regulatorio que impactaram o resultado do periodo. Os custos recorrentes mantiveram-se estaveis em relacao aos meses anteriores.\n\nO acumulado de despesas no trimestre atingiu R$ 125.400,00, superando a receita em R$ 18.300,00. A gestao deve classificar as despesas em essenciais e nao essenciais para identificar oportunidades de corte imediato, priorizando a manutencao dos servicos criticos ao cliente e a reducao de custos administrativos.",
+      "error": null
+    },
+    "fluxo_caixa": {
+      "title": "Fluxo de Caixa",
+      "analysis": "O fluxo de caixa de marco registrou deficit de R$ 6.700,00, acumulando saida liquida de R$ 18.300,00 no trimestre. A pressao sobre o capital de giro intensificou-se, com a empresa operando com margem de seguranca cada vez menor para absorver eventuais imprevistos financeiros.\n\nA analise do ciclo financeiro revela que o prazo medio de recebimento aumentou para 28 dias, enquanto o prazo medio de pagamento permanece em 15 dias. Essa assimetria agrava o descasamento de caixa e exige acao imediata para renegociar prazos com fornecedores e acelerar a cobranca de clientes inadimplentes.",
+      "error": null
+    },
+    "tesouraria": {
+      "title": "Tesouraria",
+      "analysis": "A posicao de tesouraria ao final de marco indicava R$ 36.200,00 a receber e R$ 26.900,00 a pagar. O saldo liquido de R$ 9.300,00 representa colchao limitado diante do ritmo de consumo de caixa observado no trimestre. A concentracao de recebiveis em poucos clientes tambem representa risco de credito relevante.\n\nRecomenda-se a diversificacao da carteira de clientes e a implementacao de limites de exposicao por devedor. A gestao de tesouraria deve trabalhar em conjunto com a area comercial para equilibrar o crescimento de vendas com a qualidade do credito concedido.",
+      "error": null
+    },
+    "comparativo": {
+      "title": "Comparativo",
+      "analysis": "O primeiro trimestre de 2026 apresentou resultado 22% inferior ao mesmo periodo de 2025. A receita cresceu apenas 5% enquanto as despesas aumentaram 18%, evidenciando perda de eficiencia operacional. O numero de cancelamentos no trimestre foi 40% superior ao registrado no primeiro trimestre do ano anterior.\n\nA analise comparativa trimestral confirma a tendencia de deterioracao dos indicadores financeiros da Boleto Amigo. Sem reversao dessa trajetoria, o resultado anual projetado aponta para deficit superior a R$ 30.000,00, comprometendo a capacidade de investimento e a saude financeira da subsidiaria do Grupo Economy.",
+      "error": null
+    }
+  },
+  "conclusao": "O encerramento do primeiro trimestre de 2026 consolida um cenario financeiro preocupante para a Boleto Amigo, com deficit acumulado de R$ 18.300,00 e 37 cancelamentos. A empresa opera consistentemente no vermelho, com despesas superando receitas em todos os meses do periodo, e a taxa de cancelamento compromete a base de receita recorrente.\n\nA recomendacao e que a diretoria do Grupo Economy convoque reuniao extraordinaria para definir plano de acao emergencial contemplando: reducao imediata de custos nao essenciais, programa de retencao de clientes com metas mensais de reducao de churn, e estudo de viabilidade para diversificacao de produtos e servicos financeiros da Boleto Amigo."
+}

@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-05-29T12:00:00.000Z",
+  "empresa": "Boleto Amigo",
+  "periodo": "Maio/2026",
+  "year": 2026,
+  "month": 5,
+  "filter": "realizado",
+  "secoes": {
+    "visao_geral": {
+      "title": "Visao Geral",
+      "analysis": "Maio de 2026 encerrou com receita de R$ 36.343,42 e despesas de R$ 43.761,19, resultando em deficit mensal de R$ 7.417,77. O acumulado do exercicio atingiu resultado negativo de R$ 32.417,77, com receita total de R$ 179.943,42 e despesas de R$ 212.361,19. O volume de vendas no mes foi de 77 operacoes, totalizando 388 vendas no ano.\n\nOs cancelamentos em maio somaram 14 ocorrencias, fechando o acumulado de 2026 em 66 cancelamentos com valor total cancelado de R$ 50.653,00. A taxa de cancelamento de 17% sobre o total de vendas e alarmante e representa a principal ameaca a recuperacao financeira da Boleto Amigo. O total de 3.003 movimentos financeiros processados no ano demonstra volume operacional expressivo, porem insuficiente para gerar resultado positivo.",
+      "error": null
+    },
+    "receita": {
+      "title": "Receita",
+      "analysis": "A receita de maio totalizou R$ 36.343,42, mantendo-se no patamar dos meses anteriores sem sinais de recuperacao significativa. O acumulado de receita no ano de R$ 179.943,42 representa media mensal de R$ 35.988,68, valor consistentemente inferior a media de despesas de R$ 42.472,24. O gap mensal medio de R$ 6.483,55 entre despesa e receita evidencia desequilibrio estrutural.\n\nA receita da Boleto Amigo permanece concentrada na emissao e gestao de boletos bancarios, produto que enfrenta pressao de precos devido a concorrencia de fintechs e meios de pagamento alternativos como Pix. A empresa precisa urgentemente desenvolver novas linhas de receita, como servicos de cobranca recorrente, gestao de inadimplencia e solucoes de conciliacao financeira para empresas.",
+      "error": null
+    },
+    "despesa": {
+      "title": "Despesa",
+      "analysis": "As despesas de maio atingiram R$ 43.761,19, o segundo maior valor do ano. O acumulado de R$ 212.361,19 em despesas representa crescimento real em relacao ao mesmo periodo do ano anterior, impulsionado por reajustes salariais, aumento de custos de infraestrutura em nuvem e despesas com adequacao regulatoria.\n\nA estrutura de despesas da Boleto Amigo precisa de reestruturacao profunda. A relacao despesa/receita de 1,18 indica que para cada R$ 1,00 de receita gerada, a empresa gasta R$ 1,18. Para atingir o equilibrio financeiro sem aumento de receita, seria necessario cortar R$ 32.417,77 em despesas anuais, equivalente a reducao de 15,3% na base de custos atual.",
+      "error": null
+    },
+    "fluxo_caixa": {
+      "title": "Fluxo de Caixa",
+      "analysis": "O fluxo de caixa acumulado de janeiro a maio apresenta deficit de R$ 32.417,77, com media mensal negativa de R$ 6.483,55. A empresa consumiu reservas de capital de giro de forma acelerada e a continuidade dessa trajetoria coloca em risco a capacidade de honrar compromissos nos proximos meses sem aporte externo.\n\nA posicao de valores a receber de R$ 166.243,60 e valores a pagar de R$ 127.401,57 indica saldo liquido futuro positivo de R$ 38.842,03. Contudo, a realizacao desse saldo depende da qualidade dos recebiveis e dos prazos efetivos de recebimento. A gestao de caixa deve operar com cenarios conservadores para evitar surpresas de liquidez.",
+      "error": null
+    },
+    "tesouraria": {
+      "title": "Tesouraria",
+      "analysis": "A posicao de tesouraria ao final de maio registra R$ 166.243,60 a receber e R$ 127.401,57 a pagar. O saldo liquido de R$ 38.842,03 oferece alguma margem de seguranca, mas e insuficiente para compensar o ritmo de deterioracao do resultado operacional. A composicao dos recebiveis inclui parcela relevante de titulos com prazo superior a 60 dias, o que limita a liquidez efetiva.\n\nA gestao de tesouraria deve implementar dashboard de monitoramento diario com alertas automaticos para concentracoes de vencimento e desvios de fluxo projetado versus realizado. A antecipacao seletiva de recebiveis com custo financeiro atrativo pode ser utilizada como instrumento tatico para equilibrar o caixa em meses de maior pressao.",
+      "error": null
+    },
+    "comparativo": {
+      "title": "Comparativo",
+      "analysis": "O comparativo do acumulado janeiro-maio 2026 versus 2025 revela deterioracao em todos os indicadores financeiros. O resultado liquido negativo de R$ 32.417,77 contrasta com deficit de R$ 12.800,00 no mesmo periodo do ano anterior, representando piora de 153%. As despesas cresceram 21% enquanto a receita avancou apenas 4%, configurando tesoura financeira insustentavel.\n\nOs 66 cancelamentos acumulados em 2026 com valor de R$ 50.653,00 superam significativamente os 39 cancelamentos registrados no mesmo periodo de 2025. O valor medio por cancelamento de R$ 767,47 indica que a empresa esta perdendo clientes de ticket relevante. A analise de cohort dos clientes cancelados deve ser priorizada para identificar padroes e causas raiz da evasao.",
+      "error": null
+    }
+  },
+  "conclusao": "O fechamento de maio de 2026 consolida um cenario financeiro critico para a Boleto Amigo, com deficit acumulado de R$ 32.417,77, receita de R$ 179.943,42 insuficiente para cobrir despesas de R$ 212.361,19, e 66 cancelamentos representando R$ 50.653,00 em receita perdida. A empresa opera com relacao despesa/receita de 1,18, consumindo mais recursos do que gera, e a tendencia nao apresenta sinais de reversao espontanea.\n\nE imprescindivel que o Grupo Economy tome medidas estruturais imediatas: reestruturacao de custos com meta de reducao de 15% no proximo semestre, programa de retencao de clientes com foco nos segmentos de maior valor, diversificacao de receita atraves de novos produtos financeiros, e avaliacao de necessidade de aporte de capital para garantir a operacao ate que as medidas corretivas gerem resultado. O acompanhamento quinzenal dos indicadores pelo conselho do grupo e essencial para garantir execucao e prestacao de contas."
+}

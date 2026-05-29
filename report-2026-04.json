@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-05-29T12:00:00.000Z",
+  "empresa": "Boleto Amigo",
+  "periodo": "Abril/2026",
+  "year": 2026,
+  "month": 4,
+  "filter": "realizado",
+  "secoes": {
+    "visao_geral": {
+      "title": "Visao Geral",
+      "analysis": "Abril de 2026 registrou receita de R$ 36.500,00 e despesas de R$ 43.200,00, resultando em deficit mensal de R$ 6.700,00. O acumulado de janeiro a abril atingiu resultado negativo de R$ 25.000,00, confirmando a trajetoria de deterioracao financeira da Boleto Amigo no exercicio. O volume de vendas foi de 79 operacoes, com leve reducao em relacao a marco.\n\nOs cancelamentos em abril totalizaram 15 ocorrencias, o pior mes do ano ate o momento. O acumulado de 52 cancelamentos nos primeiros quatro meses representa perda estimada de R$ 39.900,00 em receita, valor que sozinho seria suficiente para cobrir o deficit de quase dois meses de operacao. A retencao de clientes deve ser tratada como prioridade absoluta.",
+      "error": null
+    },
+    "receita": {
+      "title": "Receita",
+      "analysis": "A receita de abril recuou para R$ 36.500,00, interrompendo a tendencia de crescimento observada no primeiro trimestre. A queda reflete tanto a sazonalidade do periodo quanto o impacto acumulado dos cancelamentos sobre a base de clientes ativos. O faturamento medio por cliente manteve-se estavel, indicando que a reducao de receita decorre principalmente da perda de volume.\n\nO acumulado de receita nos primeiros quatro meses totalizou R$ 143.600,00, representando ritmo anualizado de R$ 430.800,00. Esse patamar esta significativamente abaixo do necessario para cobrir a estrutura de custos atual. A diversificacao de receita atraves de servicos de valor agregado, como gestao de cobranca e antecipacao de recebiveis, deve ser acelerada.",
+      "error": null
+    },
+    "despesa": {
+      "title": "Despesa",
+      "analysis": "As despesas de abril totalizaram R$ 43.200,00, com ligeira reducao em relacao a marco devido a ausencia dos custos pontuais de atualizacao de sistemas. No entanto, a base de custos fixos permanece elevada e incompativel com o nivel de receita atual da empresa.\n\nO acumulado de despesas de janeiro a abril atingiu R$ 168.600,00. A analise por categoria revela que custos com pessoal representam 45% do total, seguidos por infraestrutura tecnologica com 25% e taxas bancarias com 15%. A otimizacao da equipe e a migracao para solucoes de infraestrutura mais eficientes sao caminhos viáveis para reducao estrutural de custos.",
+      "error": null
+    },
+    "fluxo_caixa": {
+      "title": "Fluxo de Caixa",
+      "analysis": "O fluxo de caixa de abril manteve-se negativo com deficit de R$ 6.700,00, acumulando saida liquida de R$ 25.000,00 nos primeiros quatro meses. A posicao de caixa da empresa atingiu niveis que demandam atencao redobrada, com risco de necessidade de aporte de capital do Grupo Economy caso a tendencia persista.\n\nA gestao de caixa deve priorizar a cobranca de valores vencidos e a renegociacao de prazos com fornecedores estrategicos. A elaboracao de cenarios de estresse financeiro e recomendada para mapear o ponto critico de liquidez e definir gatilhos para acionamento de medidas emergenciais.",
+      "error": null
+    },
+    "tesouraria": {
+      "title": "Tesouraria",
+      "analysis": "A tesouraria de abril apresentou valores a receber de R$ 38.500,00 e valores a pagar de R$ 27.200,00. Embora o saldo liquido de recebiveis permaneca positivo em R$ 11.300,00, o envelhecimento da carteira de recebiveis e preocupante, com aumento de 12% nos titulos vencidos ha mais de 30 dias em relacao ao mes anterior.\n\nA implementacao de regras automatizadas de cobranca escalonada, com notificacoes progressivas antes e apos o vencimento, pode reduzir significativamente a inadimplencia. A integracao com sistemas de protesto eletronico tambem deve ser avaliada como ferramenta de pressao para recuperacao de creditos.",
+      "error": null
+    },
+    "comparativo": {
+      "title": "Comparativo",
+      "analysis": "O quadrimestre de 2026 apresenta resultado acumulado 28% pior que o mesmo periodo de 2025. A diferenca se deve principalmente ao crescimento acelerado das despesas, que aumentaram 20% ano contra ano, enquanto a receita cresceu apenas 3%. A produtividade por colaborador tambem apresentou queda, com menor volume de operacoes processadas por pessoa.\n\nA taxa de cancelamento acumulada de 52 clientes nos primeiros quatro meses de 2026 contrasta com 31 cancelamentos no mesmo periodo de 2025, representando aumento de 68%. Esse indicador e o mais critico para a sustentabilidade da operacao e exige investigacao detalhada das causas de insatisfacao dos clientes.",
+      "error": null
+    }
+  },
+  "conclusao": "Abril de 2026 reforça o cenario de urgencia financeira da Boleto Amigo, com deficit acumulado de R$ 25.000,00 e 52 cancelamentos nos primeiros quatro meses. O ritmo de deterioracao indica que, sem intervencao imediata, o resultado anual podera superar os R$ 35.000,00 negativos, comprometendo seriamente a viabilidade da operacao como subsidiaria do Grupo Economy.\n\nAs acoes prioritarias incluem: programa emergencial de retencao de clientes com atendimento proativo aos clientes em risco de cancelamento, revisao completa da estrutura de custos com meta de reducao de 15% no proximo trimestre, e desenvolvimento acelerado de novos produtos financeiros para diversificacao de receita. O Grupo Economy deve avaliar a necessidade de aporte de capital para garantir a continuidade operacional."
+}
