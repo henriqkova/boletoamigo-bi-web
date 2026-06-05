@@ -198,6 +198,7 @@ function normalize(t, kind) {
     cancelado,
     nf: t.numero_documento_fiscal || '',
     parcela: t.numero_parcela || '',
+    tags: '',
   };
 }
 
@@ -271,6 +272,7 @@ function normalizeMovimento(m) {
     grupo,
     nf: d.cNumDocFiscal || '',
     parcela: d.cNumParcela || '',
+    tags: '',
   };
 }
 
@@ -303,6 +305,7 @@ function normalizeAdapter(m) {
     realizado,
     cancelado: false,
     regime: m.regime || 'caixa',
+    tags: Array.isArray(m.tags) ? m.tags.join(',') : (m.tags || ''),
   };
 }
 
@@ -621,7 +624,7 @@ const SEGMENTS = ${JSON.stringify({ realizado, a_pagar_receber, tudo }, null, 2)
 // realizadas + a pagar + canceladas excluidas). Usada pra cross-filter real
 // — pagina recalcula KPIs/charts/tabelas em runtime via aggregateTx().
 // Cada row eh tupla compacta pra reduzir tamanho do bundle:
-// [kind, mes, dia, categoria, cliente, valor, realizado, fornecedor, centroCusto, regime]
+// [kind, mes, dia, categoria, cliente, valor, realizado, fornecedor, centroCusto, regime, tags]
 // regime: 'c' = caixa, 'k' = competencia (compacto pra economizar bytes)
 const ALL_TX = ${JSON.stringify([
   ...recNorm.map(t => [
@@ -635,6 +638,7 @@ const ALL_TX = ${JSON.stringify([
     '',
     t.centroCusto || '',
     (t.regime || 'caixa') === 'caixa' ? 'c' : 'k',
+    t.tags || '',
   ]),
   ...despNorm.map(t => [
     'd',
@@ -647,6 +651,7 @@ const ALL_TX = ${JSON.stringify([
     t.cliente,
     t.centroCusto || '',
     (t.regime || 'caixa') === 'caixa' ? 'c' : 'k',
+    t.tags || '',
   ]),
 ])};
 
@@ -778,7 +783,10 @@ function filterTx(allTx, statusFilter, drilldown, regime, extraFilters) {
         return r[2] <= dtDay;
       });
     }
-    if (extraFilters.categoria && extraFilters.categoria !== "Todas categorias") {
+    if (extraFilters.categorias && extraFilters.categorias.length > 0) {
+      var _catSet = new Set(extraFilters.categorias);
+      out = out.filter(function(r) { return _catSet.has(r[3]); });
+    } else if (extraFilters.categoria && extraFilters.categoria !== "Todas categorias") {
       out = out.filter(function(r) { return r[3] === extraFilters.categoria; });
     }
     if (extraFilters.diaFrom && extraFilters.diaFrom > 0) {
@@ -787,8 +795,28 @@ function filterTx(allTx, statusFilter, drilldown, regime, extraFilters) {
     if (extraFilters.diaTo && extraFilters.diaTo > 0) {
       out = out.filter(function(r) { return r[2] <= extraFilters.diaTo; });
     }
-    if (extraFilters.empresa && extraFilters.empresa !== "Todas empresas") {
+    if (extraFilters.empresas && extraFilters.empresas.length > 0) {
+      var _empSet = new Set(extraFilters.empresas);
+      out = out.filter(function(r) { return _empSet.has(r[8]); });
+    } else if (extraFilters.empresa && extraFilters.empresa !== "Todas empresas") {
       out = out.filter(function(r) { return r[8] === extraFilters.empresa; });
+    }
+    if (extraFilters.tags && extraFilters.tags.length > 0) {
+      var _tags = extraFilters.tags;
+      out = out.filter(function(r) {
+        var t = r[10] || '';
+        for (var _ti = 0; _ti < _tags.length; _ti++) { if (t.indexOf(_tags[_ti]) !== -1) return true; }
+        return false;
+      });
+    } else if (extraFilters.tag && extraFilters.tag !== "Todas tags") {
+      out = out.filter(function(r) { return (r[10] || '').indexOf(extraFilters.tag) !== -1; });
+    }
+    if (extraFilters.fornecedorSearch) {
+      var fs = extraFilters.fornecedorSearch.toLowerCase();
+      out = out.filter(function(r) {
+        var nome = (r[0] === 'd' ? r[7] : r[4]) || '';
+        return nome.toLowerCase().indexOf(fs) !== -1;
+      });
     }
   }
   return out;
@@ -843,6 +871,12 @@ window.REF_YEAR = REF_YEAR;
 window.AVAILABLE_YEARS = AVAILABLE_YEARS;
 window.aggregateTx = aggregateTx;
 window.filterTx = filterTx;
+// Cache LRU para getBit — evita recompute repetido com mesmos params
+var _bitCache = new Map();
+var _bitCacheMax = 16;
+function _bitCacheKey(sf, dd, y, regime, ef) {
+  return sf + '|' + (dd ? dd.type + ':' + dd.value : '-') + '|' + y + '|' + (regime || 'caixa') + '|' + (ef ? JSON.stringify(ef) : '-');
+}
 window.getBit = function (statusFilter, drilldown, year, month, regime, extraFilters) {
   const sf = statusFilter || window.BIT_FILTER || 'realizado';
   const y = year || window.REF_YEAR;
@@ -852,8 +886,15 @@ window.getBit = function (statusFilter, drilldown, year, month, regime, extraFil
     const ym = y + '-' + mm;
     dd = { type: 'mes', value: ym, label: ym };
   }
-  return window.recomputeBit(sf, dd, y, regime, extraFilters);
+  var key = _bitCacheKey(sf, dd, y, regime, extraFilters);
+  if (_bitCache.has(key)) return _bitCache.get(key);
+  var result = window.recomputeBit(sf, dd, y, regime, extraFilters);
+  if (_bitCache.size >= _bitCacheMax) { var first = _bitCache.keys().next().value; _bitCache.delete(first); }
+  _bitCache.set(key, result);
+  return result;
 };
+// Invalidate cache when statusFilter changes
+window._invalidateBitCache = function() { _bitCache.clear(); };
 // Cross-filter helper: combina statusFilter + drilldown + regime e retorna BIT-like
 // com KPIs/charts/extrato recalculados em ~10ms (17k rows).
 window.recomputeBit = function (statusFilter, drilldown, year, regime, extraFilters) {

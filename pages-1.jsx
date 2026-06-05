@@ -218,13 +218,15 @@ const PageOverview = ({ filters, setFilters, onOpenFilters, statusFilter, drilld
     if (!drilldown) txs = txs.filter(r => r[1] && r[1].startsWith(String(year || refYear)));
 
     var impostos = 0, capex = 0, juros = 0;
-    var reImposto = /imposto|icms|pis[\s\/]|cofins|iss[\s\/]|ipi[\s\/]|irpj|irrf|csll|simples|tribut|inss|fgts|dedu[cç][oõ]|DAS\b|reten[cç][aã]o/i;
-    var reCapex = /equip|veicul|ve[ií]culo|maquin|imobili|investimento|bens/i;
+    var reExclude = /compra\s+de\s+d[ií]vidas|conta\s+simples/i;
+    var reImposto = /imposto|icms|pis[\s\/]|cofins|iss[\s\/]|ipi[\s\/]|irpj|irpf|irrf|csll|simples|tribut|inss|fgts|dedu[cç][oõ]|\bDAS\b|\bdarf\b|iptu|taxa.*junta|junta.*comercial|reten[cç][aã]o/i;
+    var reCapex = /equip|maquin|imobili|investimento|bens|aliena/i;
     var reJuros = /amortiza|empr[eé]stimo|juros|financ/i;
     for (var i = 0; i < txs.length; i++) {
       if (txs[i][0] !== "d") continue;
       var cat = txs[i][3] || "";
       var val = txs[i][5];
+      if (reExclude.test(cat)) continue;
       if (cat.startsWith("02.") || reImposto.test(cat)) impostos += val;
       else if (cat.startsWith("05.") || reCapex.test(cat)) capex += val;
       else if (cat.startsWith("10.") || reJuros.test(cat)) juros += val;
@@ -527,22 +529,46 @@ const PageReceita = ({ filters, setFilters, onOpenFilters, statusFilter, drilldo
 };
 
 const PageDespesa = ({ filters, setFilters, onOpenFilters, statusFilter, drilldown, setDrilldown, year, month }) => {
-  const B = useMemo(() => window.getBit(statusFilter, drilldown, year, month, filters && filters.regime, filters), [statusFilter, drilldown, year, month, filters]);
-  const BFull = useMemo(() => window.getBit(statusFilter, null, year, month, filters && filters.regime, filters), [statusFilter, year, month, filters]);
   const [range, setRange] = useState("12M");
-  const refYear = (B.META && B.META.ref_year) || new Date().getFullYear();
+  const [tagFilter, setTagFilter] = useState([]);
+  const [fornecedorSearch, setFornecedorSearch] = useState("");
+  const refYear = year || (window.REF_YEAR || new Date().getFullYear());
+
+  // Merge tag + fornecedorSearch into filters for getBit
+  const mergedFilters = useMemo(() => {
+    var f = Object.assign({}, filters || {});
+    if (tagFilter && tagFilter.length > 0) f.tags = tagFilter;
+    if (fornecedorSearch) f.fornecedorSearch = fornecedorSearch;
+    return f;
+  }, [filters, tagFilter, fornecedorSearch]);
+
+  const B = useMemo(() => window.getBit(statusFilter, drilldown, year, month, mergedFilters && mergedFilters.regime, mergedFilters), [statusFilter, drilldown, year, month, mergedFilters]);
+  const BFull = useMemo(() => window.getBit(statusFilter, null, year, month, mergedFilters && mergedFilters.regime, mergedFilters), [statusFilter, year, month, mergedFilters]);
+
   const totalDespesa = B.TOTAL_DESPESA;
   const mesesComDados = B.MONTH_DATA.filter(m => m.despesa > 0).length || 1;
   const mediaMes = totalDespesa / mesesComDados;
   const numFornec = useMemo(() => {
-    var rg = (filters && filters.regime === "competencia") ? "k" : "c";
+    var rg = (mergedFilters && mergedFilters.regime === "competencia") ? "k" : "c";
     var seen = new Set();
-    var txs = window.filterTx ? window.filterTx(window.ALL_TX || [], statusFilter || "realizado", drilldown, rg, filters) : [];
-    txs = txs.filter(r => r[1] && r[1].startsWith(String(year || refYear)));
+    var txs = window.filterTx ? window.filterTx(window.ALL_TX || [], statusFilter || "realizado", drilldown, rg, mergedFilters) : [];
+    txs = txs.filter(r => r[1] && r[1].startsWith(String(refYear)));
     for (var i = 0; i < txs.length; i++) { if (txs[i][0] === "d" && txs[i][7]) seen.add(txs[i][7]); }
     return seen.size;
-  }, [filters, statusFilter, drilldown, year, refYear]);
+  }, [mergedFilters, statusFilter, drilldown, year, refYear]);
   const mediaDesp = numFornec > 0 ? totalDespesa / numFornec : 0;
+
+  // Tags únicas (despesas, caixa, realizado, ano corrente)
+  const allTags = useMemo(() => {
+    var rg = (filters && filters.regime === "competencia") ? "k" : "c";
+    var txs = (window.ALL_TX || []).filter(r => r[0] === "d" && r[9] === rg && r[6] === 1 && r[1] && r[1].startsWith(String(refYear)));
+    var s = new Set();
+    for (var i = 0; i < txs.length; i++) {
+      var t = txs[i][10];
+      if (t) t.split(",").forEach(function (x) { var tt = x.trim(); if (tt) s.add(tt); });
+    }
+    return ["Todas tags", ...Array.from(s).sort()];
+  }, [filters, refYear]);
 
   const handleBarMes = (v, i) => {
     const mm = String(i + 1).padStart(2, "0");
@@ -565,6 +591,8 @@ const PageDespesa = ({ filters, setFilters, onOpenFilters, statusFilter, drilldo
     ? Math.abs(extratoFiltrado.reduce((s, e) => s + e[4], 0))
     : totalDespesa;
 
+  const hasActiveFilters = tagFilter.length > 0 || fornecedorSearch;
+
   return (
     <div className="page">
       <div className="page-title">
@@ -578,6 +606,35 @@ const PageDespesa = ({ filters, setFilters, onOpenFilters, statusFilter, drilldo
       </div>
 
       <DrilldownBadge drilldown={drilldown} onClear={() => setDrilldown(null)} />
+
+      {/* Filtros: Tag + Pesquisa fornecedor */}
+      <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", marginBottom: 8, position: "relative", zIndex: 100 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <label style={{ fontSize: 12, color: "var(--fg-3)", whiteSpace: "nowrap" }}>Tag:</label>
+          <MultiSelect
+            options={allTags.filter(t => t !== "Todas tags")}
+            selected={tagFilter}
+            onChange={setTagFilter}
+            placeholder="Todas tags"
+          />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <label style={{ fontSize: 12, color: "var(--fg-3)", whiteSpace: "nowrap" }}>Fornecedor:</label>
+          <input
+            type="text"
+            placeholder="Pesquisar fornecedor..."
+            value={fornecedorSearch}
+            onChange={e => setFornecedorSearch(e.target.value)}
+            style={{ background: "var(--surface)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: 6, padding: "5px 10px", fontSize: 12, width: 220 }}
+          />
+        </div>
+        {hasActiveFilters && (
+          <button
+            onClick={() => { setTagFilter([]); setFornecedorSearch(""); }}
+            style={{ background: "transparent", color: "var(--red)", border: "1px solid var(--red)", borderRadius: 6, padding: "4px 10px", fontSize: 11, cursor: "pointer" }}
+          >Limpar filtros</button>
+        )}
+      </div>
 
       <div className="row row-4">
         <KpiTile label="Despesas totais" value={B.fmtK(totalDespesa)} sparkValues={B.MONTH_DATA.map(m => m.despesa)} sparkColor="var(--red)" tone="red" nonMonetary />

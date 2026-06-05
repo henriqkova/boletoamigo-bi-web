@@ -26,7 +26,7 @@ module.exports = {
     geral: {
       overview: "active", receita: "active", despesa: "active",
       fluxo: "active", tesouraria: "active", comparativo: "active",
-      relatorio: "active", valuation: "hidden", orcamento: "hidden", dre: "hidden",
+      relatorio: "active", valuation: "hidden", orcamento: "hidden", dre: "active",
     },
     outros: {
       indicators: "hidden", faturamento_produto: "hidden", curva_abc: "hidden",

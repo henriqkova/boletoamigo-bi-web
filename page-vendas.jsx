@@ -87,9 +87,9 @@ const PageVendas = ({ filters, setFilters, year }) => {
 
     return {
       totalVendas, comissaoTotal, numVendas, mediaValor,
-      porVendedorValor: sortMap(vendMap).slice(0, 8),
-      porVendedorQtd: sortMap(vendQtd).slice(0, 8),
-      comissaoPorVendedor: sortMap(comMap).slice(0, 8),
+      porVendedorValor: sortMap(vendMap).slice(0, 50),
+      porVendedorQtd: sortMap(vendQtd).slice(0, 50),
+      comissaoPorVendedor: sortMap(comMap).slice(0, 50),
       porUnidade: sortMap(unidMap),
       porMesValor: porMesV,
       porMesQtd: porMesQ,
@@ -151,93 +151,135 @@ const PageVendas = ({ filters, setFilters, year }) => {
         <KpiTile label="N° de Vendas" value={fmtN(stats.numVendas)} tone="cyan" nonMonetary />
       </div>
 
-      <div className="row" style={{ gridTemplateColumns: "minmax(0, 4fr) minmax(0, 8fr)" }}>
-        {/* Coluna esquerda: listas */}
-        <div style={{ display: "grid", gap: 14 }}>
-          <div className="card">
-            <h2 className="card-title"><b>VENDAS</b> POR VENDEDOR</h2>
+      {/* Gráficos mensais */}
+      <div className="row" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
+        <div className="card">
+          <h2 className="card-title"><b>VENDAS</b> POR ANO E MÊS</h2>
+          <div className="vbar-chart" style={{ height: 220 }}>
+            {stats.porMesValor.map((v, i) => {
+              const h = (v / maxMesV) * 100;
+              const isActive = drill && drill.type === "mes" && drill.value === i;
+              const isDimmed = drill && drill.type === "mes" && drill.value !== i;
+              return (
+                <div key={i} className={"vbar-col clickable" + (isActive ? " active" : "") + (isDimmed ? " dimmed" : "")} style={{ cursor: "pointer" }} onClick={() => toggleDrill("mes", i)}>
+                  <div className="stack">
+                    <div className="bar" style={{ height: h + "%", background: "var(--cyan)" }}>
+                      {v > 0 && <span className="v">{fmtMil(v)}</span>}
+                    </div>
+                  </div>
+                  <span className="x">{MESES_FULL[i] ? MESES_FULL[i].slice(0, 3) : ""}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="card">
+          <h2 className="card-title"><b>NÚMERO</b> DE VENDAS POR MÊS</h2>
+          <div className="vbar-chart" style={{ height: 220 }}>
+            {stats.porMesQtd.map((v, i) => {
+              const h = (v / maxMesQ) * 100;
+              const isActive = drill && drill.type === "mes" && drill.value === i;
+              const isDimmed = drill && drill.type === "mes" && drill.value !== i;
+              return (
+                <div key={i} className={"vbar-col clickable" + (isActive ? " active" : "") + (isDimmed ? " dimmed" : "")} style={{ cursor: "pointer" }} onClick={() => toggleDrill("mes", i)}>
+                  <div className="stack">
+                    <div className="bar" style={{ height: h + "%", background: "var(--cyan)" }}>
+                      {v > 0 && <span className="v">{fmtN(v)}</span>}
+                    </div>
+                  </div>
+                  <span className="x">{MESES_FULL[i] ? MESES_FULL[i].slice(0, 3) : ""}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="card">
+          <h2 className="card-title"><b>COMISSÕES PAGAS</b> POR ANO E MÊS</h2>
+          <div className="vbar-chart" style={{ height: 220 }}>
+            {stats.comissaoPorMes.map((v, i) => {
+              const h = (v / maxCom) * 100;
+              const isActive = drill && drill.type === "mes" && drill.value === i;
+              const isDimmed = drill && drill.type === "mes" && drill.value !== i;
+              return (
+                <div key={i} className={"vbar-col clickable" + (isActive ? " active" : "") + (isDimmed ? " dimmed" : "")} style={{ cursor: "pointer" }} onClick={() => toggleDrill("mes", i)}>
+                  <div className="stack">
+                    <div className="bar" style={{ height: h + "%", background: "var(--cyan)" }}>
+                      {v > 0 && <span className="v">{fmtMil(v)}</span>}
+                    </div>
+                  </div>
+                  <span className="x">{MESES_FULL[i] ? MESES_FULL[i].slice(0, 3) : ""}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Listas de vendedores com scroll */}
+      <div className="row" style={{ gridTemplateColumns: "1fr 1fr 1fr 1fr" }}>
+        <div className="card">
+          <h2 className="card-title"><b>VENDAS</b> POR VENDEDOR</h2>
+          <div style={{ maxHeight: 400, overflowY: "auto" }}>
             <BarList items={stats.porVendedorValor} formatter={fmtMil} color="cyan" onItemClick={(it) => toggleDrill("vendedor", it.name)} activeName={drill && drill.type === "vendedor" ? drill.value : null} />
           </div>
-          <div className="card">
-            <h2 className="card-title"><b>COMISSÕES PAGAS</b> POR VENDEDORES</h2>
+        </div>
+        <div className="card">
+          <h2 className="card-title"><b>NÚMERO DE VENDAS</b> POR VENDEDOR</h2>
+          <div style={{ maxHeight: 400, overflowY: "auto" }}>
+            <BarList items={stats.porVendedorQtd} formatter={v => fmtN(v)} color="cyan" onItemClick={(it) => toggleDrill("vendedor", it.name)} activeName={drill && drill.type === "vendedor" ? drill.value : null} />
+          </div>
+        </div>
+        <div className="card">
+          <h2 className="card-title"><b>COMISSÕES PAGAS</b> POR VENDEDORES</h2>
+          <div style={{ maxHeight: 400, overflowY: "auto" }}>
             <BarList items={stats.comissaoPorVendedor} formatter={fmtMil} color="cyan" onItemClick={(it) => toggleDrill("vendedor", it.name)} activeName={drill && drill.type === "vendedor" ? drill.value : null} />
           </div>
-          <div className="card">
-            <h2 className="card-title"><b>VENDAS</b> POR UNIDADE</h2>
+        </div>
+        <div className="card">
+          <h2 className="card-title"><b>VENDAS</b> POR UNIDADE</h2>
+          <div style={{ maxHeight: 400, overflowY: "auto" }}>
             <BarList items={stats.porUnidade} formatter={v => fmtN(v)} color="cyan" onItemClick={(it) => toggleDrill("unidade", it.name)} activeName={drill && drill.type === "unidade" ? drill.value : null} />
           </div>
         </div>
+      </div>
 
-        {/* Coluna direita: gráficos mensais */}
-        <div style={{ display: "grid", gap: 14 }}>
-          <div className="card">
-            <h2 className="card-title"><b>VENDAS</b> POR ANO E MÊS</h2>
-            <div className="vbar-chart" style={{ height: 220 }}>
-              {stats.porMesValor.map((v, i) => {
-                const h = (v / maxMesV) * 100;
-                const isActive = drill && drill.type === "mes" && drill.value === i;
-                const isDimmed = drill && drill.type === "mes" && drill.value !== i;
+      {/* Extrato de vendas */}
+      <div className="card">
+        <h2 className="card-title"><b>EXTRATO</b> DE VENDAS</h2>
+        <div className="t-scroll" style={{ maxHeight: 500 }}>
+          <table className="t">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Vendedor</th>
+                <th>Unidade</th>
+                <th>Cliente</th>
+                <th className="num">Valor Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...rows].sort((a, b) => (b.data || "").localeCompare(a.data || "")).map((v, i) => {
+                const d = (v.data || "").split("-");
+                const dateStr = d.length === 3 ? d[2] + "/" + d[1] + "/" + d[0] : "";
                 return (
-                  <div key={i} className={"vbar-col clickable" + (isActive ? " active" : "") + (isDimmed ? " dimmed" : "")} style={{ cursor: "pointer" }} onClick={() => toggleDrill("mes", i)}>
-                    <div className="stack">
-                      <div className="bar" style={{ height: h + "%", background: "var(--cyan)" }}>
-                        {v > 0 && <span className="v">{fmtMil(v)}</span>}
-                      </div>
-                    </div>
-                    <span className="x">{MESES_FULL[i] ? MESES_FULL[i].slice(0, 3) : ""}</span>
-                  </div>
+                  <tr key={i}>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 11 }}>{dateStr}</td>
+                    <td>{v.vendedor || "Sem vendedor"}</td>
+                    <td>{v.empresa || ""}</td>
+                    <td>{(v.cliente || "").slice(0, 40)}</td>
+                    <td className="num" style={{ color: "var(--cyan)" }}>{fmtMil(v.valorTotal)}</td>
+                  </tr>
                 );
               })}
-            </div>
-          </div>
-
-          <div className="row row-1-1">
-            <div className="card">
-              <h2 className="card-title"><b>NÚMERO</b> DE VENDAS POR MÊS</h2>
-              <div className="vbar-chart" style={{ height: 180 }}>
-                {stats.porMesQtd.map((v, i) => {
-                  const h = (v / maxMesQ) * 100;
-                  const isActive = drill && drill.type === "mes" && drill.value === i;
-                  const isDimmed = drill && drill.type === "mes" && drill.value !== i;
-                  return (
-                    <div key={i} className={"vbar-col clickable" + (isActive ? " active" : "") + (isDimmed ? " dimmed" : "")} style={{ cursor: "pointer" }} onClick={() => toggleDrill("mes", i)}>
-                      <div className="stack">
-                        <div className="bar" style={{ height: h + "%", background: "var(--cyan)" }}>
-                          {v > 0 && <span className="v">{fmtN(v)}</span>}
-                        </div>
-                      </div>
-                      <span className="x">{MESES_FULL[i] ? MESES_FULL[i].slice(0, 3) : ""}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="card">
-              <h2 className="card-title"><b>NÚMERO DE VENDAS</b> POR VENDEDOR</h2>
-              <BarList items={stats.porVendedorQtd} formatter={v => fmtN(v)} color="cyan" onItemClick={(it) => toggleDrill("vendedor", it.name)} activeName={drill && drill.type === "vendedor" ? drill.value : null} />
-            </div>
-          </div>
-
-          <div className="card">
-            <h2 className="card-title"><b>COMISSÕES PAGAS</b> POR ANO E MÊS</h2>
-            <div className="vbar-chart" style={{ height: 200 }}>
-              {stats.comissaoPorMes.map((v, i) => {
-                const h = (v / maxCom) * 100;
-                const isActive = drill && drill.type === "mes" && drill.value === i;
-                const isDimmed = drill && drill.type === "mes" && drill.value !== i;
-                return (
-                  <div key={i} className={"vbar-col clickable" + (isActive ? " active" : "") + (isDimmed ? " dimmed" : "")} style={{ cursor: "pointer" }} onClick={() => toggleDrill("mes", i)}>
-                    <div className="stack">
-                      <div className="bar" style={{ height: h + "%", background: "var(--cyan)" }}>
-                        {v > 0 && <span className="v">{fmtMil(v)}</span>}
-                      </div>
-                    </div>
-                    <span className="x">{MESES_FULL[i] ? MESES_FULL[i].slice(0, 3) : ""}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+              {rows.length === 0 && (
+                <tr><td colSpan="5" style={{ textAlign: "center", color: "var(--mute)", padding: 20 }}>Sem vendas no período</td></tr>
+              )}
+              <tr className="total">
+                <td colSpan="4">Total ({fmtN(rows.length)} vendas)</td>
+                <td className="num" style={{ color: "var(--cyan)" }}>{fmtMil(stats.totalVendas)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

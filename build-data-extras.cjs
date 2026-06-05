@@ -26,7 +26,7 @@ try { cfg = require('./bi.config.js'); }
 catch (e) { console.error('ERRO: bi.config.js nao encontrado.'); process.exit(1); }
 
 const FONTES    = cfg.fontes || {};
-const ECO       = FONTES.boletoamigo_xlsx || {};
+const ECO       = FONTES.economy_xlsx || {};
 const DRIVE     = (FONTES.drive && FONTES.drive.base_path) || '';
 const DATA_DIR  = path.join(__dirname, 'data');
 const OUT_JSON  = path.join(DATA_DIR, 'extras.json');
@@ -36,7 +36,6 @@ const VENDAS_PATH       = ECO.vendas_path || '';
 const VENDAS_FILES      = ECO.vendas_files || [];
 const VENDEDORES_FILE   = ECO.vendedores_file || '';
 const CANCELAMENTOS_FILE = ECO.cancelamentos_file || '';
-const EMPRESA_FILTER    = ECO.empresa_filter || '';
 
 const ANO_REF = (cfg.meta && cfg.meta.ano_corrente) || new Date().getFullYear();
 
@@ -216,9 +215,6 @@ for (const fileName of VENDAS_FILES) {
 
     if (!empresa && !cliente) continue;
 
-    // Filter by empresa if configured
-    if (EMPRESA_FILTER && empresa !== EMPRESA_FILTER) continue;
-
     // Dedup by empresa + codigo
     if (codigo) {
       const dedupKey = `${empresa}|${codigo}`;
@@ -242,8 +238,8 @@ for (const fileName of VENDAS_FILES) {
   }
 }
 
-// Filter to anoRef
-const vendasAno = allVendas.filter(v => yearFromIso(v.data) === ANO_REF);
+// Filter to anoRef — vendas sem data são incluídas (planilhas Nirocred/Boleto Amigo não têm data)
+const vendasAno = allVendas.filter(v => !v.data || yearFromIso(v.data) === ANO_REF);
 console.log(`  total parsed: ${allVendas.length} | dedup remaining: ${allVendas.length} | ano ${ANO_REF}: ${vendasAno.length}`);
 
 // Aggregations - vendas
@@ -308,9 +304,6 @@ if (CANCELAMENTOS_FILE && fs.existsSync(CANCELAMENTOS_FILE)) {
 
       if (!empresa && !cliente) continue;
 
-      // Filter by empresa if configured
-      if (EMPRESA_FILTER && empresa !== EMPRESA_FILTER) continue;
-
       allCancelamentos.push({
         empresa,
         cliente,
@@ -331,7 +324,7 @@ if (CANCELAMENTOS_FILE && fs.existsSync(CANCELAMENTOS_FILE)) {
 }
 
 // Filter to anoRef based on dataCancelamento
-const cancelAno = allCancelamentos.filter(c => yearFromIso(c.dataCancelamento) === ANO_REF);
+const cancelAno = allCancelamentos.filter(c => !c.dataCancelamento || yearFromIso(c.dataCancelamento) === ANO_REF);
 console.log(`  total: ${allCancelamentos.length} | ano ${ANO_REF}: ${cancelAno.length}`);
 
 // Aggregations - cancelamentos

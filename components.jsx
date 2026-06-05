@@ -287,17 +287,34 @@ const Header = ({ page, onToggleSidebar, statusFilter, setStatusFilter, year, se
   const allCats = useMemo(() => {
     const tx = window.ALL_TX || [];
     const rg = (filters && filters.regime === "competencia") ? "k" : "c";
+    const kindFilter = page === "receita" ? "r" : page === "despesa" ? "d" : null;
     const cats = new Set();
-    for (var i = 0; i < tx.length; i++) { if (tx[i][9] === rg && tx[i][3]) cats.add(tx[i][3]); }
+    for (var i = 0; i < tx.length; i++) {
+      if (tx[i][9] !== rg || !tx[i][3]) continue;
+      if (kindFilter && tx[i][0] !== kindFilter) continue;
+      cats.add(tx[i][3]);
+    }
     return ["Todas categorias", ...Array.from(cats).sort()];
-  }, [filters && filters.regime]);
+  }, [filters && filters.regime, page]);
   const allEmpresas = useMemo(() => {
-    const tx = window.ALL_TX || [];
-    const rg = (filters && filters.regime === "competencia") ? "k" : "c";
     const emps = new Set();
-    for (var i = 0; i < tx.length; i++) { if (tx[i][9] === rg && tx[i][8]) emps.add(tx[i][8]); }
+    if (page === "vendas" || page === "cancelamentos" || page === "consolidado") {
+      // Nas telas de vendas/cancelamentos, listar empresas dos dados de vendas (inclui Nirocred, Boleto Amigo)
+      var ex = window.BIT_EXTRAS;
+      if (ex && ex.vendas && ex.vendas.rows) {
+        for (var j = 0; j < ex.vendas.rows.length; j++) { if (ex.vendas.rows[j].empresa) emps.add(ex.vendas.rows[j].empresa); }
+      }
+      if (ex && ex.cancelamentos && ex.cancelamentos.rows) {
+        for (var j = 0; j < ex.cancelamentos.rows.length; j++) { if (ex.cancelamentos.rows[j].empresa) emps.add(ex.cancelamentos.rows[j].empresa); }
+      }
+    } else {
+      // Demais telas: somente empresas do financeiro (sem Nirocred/Boleto Amigo)
+      var tx = window.ALL_TX || [];
+      var rg = (filters && filters.regime === "competencia") ? "k" : "c";
+      for (var i = 0; i < tx.length; i++) { if (tx[i][9] === rg && tx[i][8]) emps.add(tx[i][8]); }
+    }
     return emps.size > 1 ? ["Todas empresas", ...Array.from(emps).sort()] : [];
-  }, [filters && filters.regime]);
+  }, [filters && filters.regime, page]);
   const dias = useMemo(() => {
     var d = [{ v: 0, l: "Todos" }];
     for (var i = 1; i <= 31; i++) d.push({ v: i, l: "" + i });
@@ -330,16 +347,22 @@ const Header = ({ page, onToggleSidebar, statusFilter, setStatusFilter, year, se
         </div>
         <div className="hd-filter-group" style={{ flex: "1 1 160px" }}>
           <label className="hd-filter-label">Categoria</label>
-          <select className="header-year" value={(filters && filters.categoria) || "Todas categorias"} onChange={e => updateFilter({ categoria: e.target.value })} title="Filtrar por categoria">
-            {allCats.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          <MultiSelect
+            options={allCats.filter(c => c !== "Todas categorias")}
+            selected={(filters && filters.categorias) || []}
+            onChange={v => updateFilter({ categorias: v, categoria: v.length === 1 ? v[0] : "Todas categorias" })}
+            placeholder="Todas categorias"
+          />
         </div>
         {allEmpresas.length > 0 && (
           <div className="hd-filter-group" style={{ flex: "1 1 160px" }}>
             <label className="hd-filter-label">Empresa</label>
-            <select className="header-year" value={(filters && filters.empresa) || "Todas empresas"} onChange={e => updateFilter({ empresa: e.target.value })} title="Filtrar por empresa">
-              {allEmpresas.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <MultiSelect
+              options={allEmpresas.filter(c => c !== "Todas empresas")}
+              selected={(filters && filters.empresas) || []}
+              onChange={v => updateFilter({ empresas: v, empresa: v.length === 1 ? v[0] : "Todas empresas" })}
+              placeholder="Todas empresas"
+            />
           </div>
         )}
       </div>
@@ -1032,10 +1055,75 @@ const RegimeToggle = ({ filters, setFilters }) => {
   );
 };
 
+// Multi-select dropdown — permite selecionar vários itens com checkboxes
+const MultiSelect = ({ options, selected, onChange, placeholder }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const count = selected.length;
+  const label = count === 0 ? (placeholder || "Todos") : count === 1 ? selected[0] : `${count} selecionados`;
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open]);
+
+  const toggle = (val) => {
+    const next = selected.includes(val) ? selected.filter(v => v !== val) : [...selected, val];
+    onChange(next);
+  };
+
+  return (
+    <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          background: "var(--surface)", color: count > 0 ? "var(--cyan)" : "var(--fg)",
+          border: count > 0 ? "1px solid var(--cyan-dim)" : "1px solid var(--border)",
+          borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer",
+          whiteSpace: "nowrap", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis",
+        }}
+      >
+        {label} <span style={{ fontSize: 9, marginLeft: 4 }}>{open ? "\u25B2" : "\u25BC"}</span>
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "100%", left: 0, zIndex: 999,
+          background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: 8, padding: "6px 0", marginTop: 4,
+          maxHeight: 280, overflowY: "auto", minWidth: 220, maxWidth: 340,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+        }}>
+          {count > 0 && (
+            <div
+              onClick={() => onChange([])}
+              style={{ padding: "5px 12px", fontSize: 11, color: "var(--red)", cursor: "pointer", borderBottom: "1px solid var(--border)" }}
+            >Limpar seleção</div>
+          )}
+          {options.map(opt => (
+            <label key={opt} style={{
+              display: "flex", alignItems: "center", gap: 8, padding: "4px 12px",
+              fontSize: 12, cursor: "pointer", whiteSpace: "nowrap",
+            }}>
+              <input type="checkbox" checked={selected.includes(opt)} onChange={() => toggle(opt)}
+                style={{ accentColor: "var(--cyan)", margin: 0 }} />
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{opt}</span>
+            </label>
+          ))}
+          {options.length === 0 && (
+            <div style={{ padding: "8px 12px", fontSize: 11, color: "var(--mute)" }}>Sem opções</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 Object.assign(window, {
   Icon, Sidebar, Header, Filters, FiltersDrawer, InlineFilterBar, ExportButton, DEFAULT_FILTERS,
   MonthlyBars, SingleBars, DailyBars, StackedArea, TrendChart, MultiLine,
   BarList, BarListLine, BarListLegend, DivergingBars, Donut, Spark, KpiTile,
   PAGE_TITLES, StatusFilterSeg, STATUS_FILTERS,
-  DrilldownBadge, applyDrilldown, extratoMonthKey, RegimeToggle,
+  DrilldownBadge, applyDrilldown, extratoMonthKey, RegimeToggle, MultiSelect,
 });
